@@ -162,4 +162,5 @@ cython_debug/
 # project specific
 .DS_Store
 LLM-VM/
+finetuned_models/
 
