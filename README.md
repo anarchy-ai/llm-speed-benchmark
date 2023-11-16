@@ -1,5 +1,11 @@
 # anarchy-benchmarks
 
+## Prompt Datasets To Checkout:
+
+- https://huggingface.co/datasets/bigscience/P3
+- https://www.kaggle.com/datasets/ratthachat/writing-prompts
+- https://github.com/f/awesome-chatgpt-prompts/tree/main
+
 ## Setup (MacOS):
 
 ```

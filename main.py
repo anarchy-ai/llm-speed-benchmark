@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer
 from llm_vm.client import Client
+import torch
 import json
 import time
 
@@ -31,6 +32,23 @@ models = {
     "llama2-7b-32k-Q4": "TheBloke/Llama-2-7B-32K-Instruct-GGML"
 }
 
+"""
+ABOUT:
+    This function contains the official logic used by LLM-VM to pick a device (GPUs or CPUs)
+DATE:
+    November 15, 2023
+SOURCE:
+    https://github.com/anarchy-ai/LLM-VM/blob/main/src/llm_vm/onsite_llm.py
+    ~lines 45 - 49
+"""
+def llmvm_device_picker():
+    device = None
+    if torch.cuda.device_count() > 1:
+        device = [f"cuda:{i}" for i in range(torch.cuda.device_count())]  # List of available GPUs
+    else:  # If only one GPU is available, use cuda:0, else use CPU
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    return device
+
 def count_tokens(model_name, text):
     # Load the tokenizer for the specified model
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -58,6 +76,7 @@ def run(model_name, prompt):
     start_time = time.time()
     response=client.complete(prompt=prompt)
     runtime = time.time() - start_time
+    device = llmvm_device_picker()
 
     return {
         "model_name": model_name,
@@ -66,7 +85,8 @@ def run(model_name, prompt):
         "response": response,
         "prompt": prompt,
         "tokens": tokens,
-        "tokens/sec": tokens / runtime
+        "tokens/sec": tokens / runtime,
+        "device": str(device)
     }
 
 # main function calls
