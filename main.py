@@ -35,7 +35,9 @@ models = {
 """
 ABOUT:
     This function contains the official logic used by LLM-VM to pick a device (GPUs or CPUs)
-DATE:
+NOTES:
+    Update this function as need be, LLM-VM is constantly changing
+LAST-DATE:
     November 15, 2023
 SOURCE:
     https://github.com/anarchy-ai/LLM-VM/blob/main/src/llm_vm/onsite_llm.py
@@ -68,27 +70,32 @@ def run(model_name, prompt):
         raise Exception("model {} is a close-sourced, API based, model".format(model_name))
     if type(prompt) != str or len(prompt) == 0:
         raise Exception("prompt MOST be type str and have a length greater then 0")
-    
-    huggingface_path = models[model_name]
-    tokens = count_tokens(huggingface_path, prompt)
 
     client = Client(big_model=str(model_name))
     start_time = time.time()
     response=client.complete(prompt=prompt)
     runtime = time.time() - start_time
+
     device = llmvm_device_picker()
+    huggingface_path = models[model_name]
+    tokens_in = count_tokens(huggingface_path, prompt)
+    tokens_out = count_tokens(huggingface_path, response["completion"])
 
     return {
         "model_name": model_name,
         "model_path": huggingface_path,
-        "runtime": runtime,
-        "response": response,
+        "runtime_secs": runtime,
         "prompt": prompt,
-        "tokens": tokens,
-        "tokens/sec": tokens / runtime,
+        "response": response,
+        "tokens": {
+            "input": tokens_in,
+            "output": tokens_out
+        },
+        "tokens_out/sec": tokens_out / runtime,
         "device": str(device)
     }
 
 # main function calls
-output = run("bloom", "hello world")
+# output = run("bloom", "hello world")
+output = run("llama2", "hello my name is Jeff...")
 print(json.dumps(output, indent=4))
