@@ -1,4 +1,4 @@
-# anarchy-benchmarks
+# benchllm
 
 ## Prompt Datasets To Checkout:
 
