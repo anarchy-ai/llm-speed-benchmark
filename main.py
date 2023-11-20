@@ -63,7 +63,7 @@ def count_tokens(model_name, text):
 
     return num_tokens
 
-def run(model_name, prompt):
+def run(model_name, prompt, ):
     if model_name not in models:
         raise Exception("model {} is NOT supported in LLM-VM".format(model_name))
     if type(models[model_name]) != str:
@@ -96,6 +96,6 @@ def run(model_name, prompt):
     }
 
 # main function calls
-# output = run("bloom", "hello world")
-output = run("llama2", "hello my name is Jeff...")
+output = run("bloom", "hello world")
+# output = run("llama2", "hello my name is Jeff...")
 print(json.dumps(output, indent=4))

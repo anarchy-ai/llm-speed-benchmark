@@ -12,3 +12,6 @@ pip3 install protobuf
 echo
 huggingface-cli login
 
+# pip3 install psutil
+# pip3 install gputil
+# pip3 install tabulate
