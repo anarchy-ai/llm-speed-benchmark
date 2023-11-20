@@ -56,18 +56,18 @@ def get_size(bytes, suffix="B"):
             return f"{bytes:.2f}{unit}{suffix}"
         bytes /= factor
 
-def system_info():
+def system_info(native=True):
+    if native == False:
+        return neofetch()
+
     uname = platform.uname()
     return {
-        "platform": {
-            "System": uname.system,
-            "Node Name": uname.node,
-            "Release": uname.release,
-            "Version": uname.version,
-            "Machine": uname.machine,
-            "Processor": uname.processor
-        },
-        "neofetch": neofetch()
+        "system": uname.system,
+        "node_name": uname.node,
+        "release": uname.release,
+        "version": uname.version,
+        "machine": uname.machine,
+        "processor": uname.processor
     }
 
 def cpu_info(options={}):
@@ -124,13 +124,16 @@ def disk_info():
 
         output["partition.device"] = {
             "mount_point": partition.mountpoint,
-            "file_system_type": partition.fstype,
-            "total_size": get_size(partition_usage.total),
-            "used": get_size(partition_usage.used),
-            "free": get_size(partition_usage.free),
-            "usage": f"{partition_usage.percent}%",
-            "partition_usage": partition_usage
+            "file_system_type": partition.fstype
         }
+
+        if partition_usage != "":
+            output["partition.device"] = {**output["partition.device"], **{
+                "total_size": get_size(partition_usage.total),
+                "used": get_size(partition_usage.used),
+                "free": get_size(partition_usage.free),
+                "usage": f"{partition_usage.percent}%"
+            }}
     
     disk_io = psutil.disk_io_counters()
     return {
@@ -139,13 +142,14 @@ def disk_info():
         "partitions": output
     }
 
-def gpu_info():
+def gpu_info(raw=True):
     gpus = GPUtil.getGPUs()
     gpus_data = {}
     for gpu in gpus:
-        gpus_data[gpu.id] = {
-            "raw": vars(gpu),
-            "clean": {
+        if raw:
+            gpus_data[gpu.id] = vars(gpu)
+        else:
+            gpus_data[gpu.id] = {
                 "id": gpu.id,
                 "uuid": gpu.uuid,
                 "name": gpu.name,
@@ -155,10 +159,19 @@ def gpu_info():
                     "used": f"{gpu.memoryUsed}MB",
                     "total": f"{gpu.memoryTotal}MB"
                 },
-                "temp": f"{gpu.temperature} °C",
-
+                "temp": f"{gpu.temperature} °C"
             }
-        }
     return gpus_data
 
-
+# MAIN FUNCTION CALLS
+if __name__ == "__main__":
+    import json
+    all_data = {
+        "system": system_info(),
+        "neofetch": system_info(False),
+        "cpu": cpu_info(),
+        "ram": memory_info(),
+        "disk": disk_info(),
+        "gpu": gpu_info()
+    }
+    print(json.dumps(all_data, indent=4))
