@@ -164,3 +164,16 @@ def gpu_info(raw=False):
                 "temp": f"{gpu.temperature} °C"
             }
     return gpus_data
+
+# MAIN FUNCTION CALLS
+if __name__ == "__main__":
+    import json
+    all_data = {
+        "system": system_info(),
+        "neofetch": system_info(False),
+        "cpu": cpu_info(),
+        "ram": memory_info(),
+        "disk": disk_info(),
+        "gpu": gpu_info()
+    }
+    print(json.dumps(all_data, indent=4))
