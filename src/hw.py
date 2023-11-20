@@ -174,3 +174,4 @@ if __name__ == "__main__":
         "gpu": gpu_info()
     }
     print(json.dumps(all_data, indent=4))
+
