@@ -21,17 +21,14 @@ import GPUtil
 import subprocess
 import json
 
-def execute(cmd):
-    proc = subprocess.Popen(str(cmd), shell=True, stdout=subprocess.PIPE,)
-    output = proc.communicate()[0].decode("utf-8")
-    return output.split("\n")
+import util
 
 def neofetch():
     # requires neofetch (https://github.com/dylanaraps/neofetch)
     cmd = "neofetch --stdout"
     output = {}
     try:
-        stdout = execute(cmd)
+        stdout = util.execute(cmd)
         for line in stdout:
             if ": " not in line:
                 continue
