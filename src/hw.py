@@ -168,7 +168,7 @@ if __name__ == "__main__":
     all_data = {
         "system": system_info(),
         "neofetch": system_info(False),
-        "cpu": cpu_info(),
+        "cpu": cpu_info({"cores": True}),
         "ram": memory_info(),
         "disk": disk_info(),
         "gpu": gpu_info()
