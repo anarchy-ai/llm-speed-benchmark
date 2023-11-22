@@ -166,4 +166,5 @@ finetuned_models/
 sandbox/
 *_metrics.json
 *_model.json
+report_*.json
 
