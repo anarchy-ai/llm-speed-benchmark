@@ -9,6 +9,6 @@
     "num_return_sequences": 1,
 
     "time_delay": 0,
-    "model_start_pause": 5,
-    "model_end_pause": 5
+    "model_start_pause": 1,
+    "model_end_pause": 1
 }

@@ -45,9 +45,9 @@ if __name__ == "__main__":
     if args.model == "":
         sys.exit(1)
 
-    local_hf_exists = hf.get_hf_model(args.model)
-    if local_hf_exists == False:
-        sys.exit(1)
+    # local_hf_exists = hf.get_hf_model(args.model)
+    # if local_hf_exists == False:
+    #     sys.exit(1)
 
     start_time = time.time()
     

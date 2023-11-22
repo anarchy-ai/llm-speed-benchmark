@@ -1,9 +1,9 @@
 # Website: https://www.runpod.io/console/pods
 # Service: RunPod
 
-apt update
-apt install vim
-apt install neofetch
+apt -y update
+apt install -y vim
+apt install -y neofetch
 
 pip3 install transformers
 pip3 install psutil

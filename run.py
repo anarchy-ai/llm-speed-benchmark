@@ -8,6 +8,7 @@ import json
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import util
+import hf
 
 ID = str(uuid.uuid4())
 
@@ -20,6 +21,12 @@ config = util.read_json(os.path.join(current_script_path, "config.json"))
 
 # Path to the virtual environment's Python executable
 env_path = os.path.join(current_script_path, "env/bin/python3")
+
+# TODO: only continue if model is installed!
+local_hf_exists = hf.get_hf_model(str(config["model"]))
+if local_hf_exists == False:
+    print(f"FAILED TO DOWNLOAD MODEL, EXISTING...")
+    sys.exit(1)
 
 # Start the metrics.py script using the Python executable from the virtual environment with the time delay argument
 collecting_process = subprocess.Popen([env_path, os.path.join(current_script_path, "metrics.py"), 
