@@ -48,7 +48,8 @@ def run_llm(model_name, input, device="", model_params={}):
     inputs = tokenizer(str(input), return_tensors="pt").to(device)
 
     for key in model_params:
-        default_model_params[key] = model_params[key]
+        if model_params[key] != None:
+            default_model_params[key] = model_params[key]
 
     start_time = time.time()
 
@@ -97,15 +98,12 @@ NAME:
 ABOUT:
     Check if hf model exists and download hf model to local disk if needed
 
-PARAMS:
-    - options.fast : not use snapshot_download() and instead use Auto model classes for minimal downloads
-
 OUTPUTS:
     - return True if hf model was downloaded successfully
     - return True if hf model is already downloaded on the disk
     - return False if function failed to download model or an error occurred
 """
-def get_hf_model(hf_repo_path, options={}):
+def get_hf_model(hf_repo_path):
     # quick & dirty way to check if a hf model/repo exists
     api = HfApi()
     try:
@@ -123,13 +121,6 @@ def get_hf_model(hf_repo_path, options={}):
     
     # download hf model/repo if it's not downloaded
     try:
-        if options.get("fast") == True:
-            print(f"FAST mode is enabled, utilizing Auto model classes to minimal downloads")
-            tokenizer = AutoTokenizer.from_pretrained(hf_repo_path)
-            model = AutoModelForCausalLM.from_pretrained(hf_repo_path)
-            del tokenizer
-            del model
-            return True
         snapshot_download(repo_id=hf_repo_path, repo_type="model", token=True)
         return True
     except:
