@@ -167,4 +167,6 @@ sandbox/
 *_metrics.json
 *_model.json
 report_*.json
+results/
+events.log
 
