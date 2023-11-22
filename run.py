@@ -9,25 +9,12 @@ import json
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import util
 
-config = {
-    "model": "bigscience/bloom-560m",
-    "prompt": "Hello World!",
-    "device": "cuda:0",
-    "max_length": 50,
-    "temperature": 0.9,
-    "top_k": 50,
-    "top_p": 0.9,
-    "num_return_sequences": 1,
-
-    "time_delay": 0,
-    "model_start_pause": 5,
-    "model_end_pause": 5
-}
-
 ID = str(uuid.uuid4())
 
 # Get the current script path
 current_script_path = os.path.dirname(os.path.abspath(__file__))
+
+config = util.read_json(os.path.join(current_script_path, "config.json"))
 
 ################################################################################################
 
@@ -39,6 +26,8 @@ collecting_process = subprocess.Popen([env_path, os.path.join(current_script_pat
                                        '--time-delay', str(config["time_delay"]),
                                        "--uuid", str(ID)
                                     ])
+
+################################################################################################
 
 time.sleep(config["model_start_pause"])
 

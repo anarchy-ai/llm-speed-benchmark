@@ -179,17 +179,3 @@ def get_all(static_only=False):
         "disk": disk_info(),
         "gpu": gpu_info()
     }
-
-# MAIN FUNCTION CALLS
-if __name__ == "__main__":
-    import json
-    all_data = {
-        "system": system_info(),
-        "neofetch": system_info(False),
-        "cpu": cpu_info({"cores": True}),
-        "ram": memory_info(),
-        "disk": disk_info(),
-        "gpu": gpu_info()
-    }
-    print(json.dumps(all_data, indent=4, ensure_ascii=False))
-
