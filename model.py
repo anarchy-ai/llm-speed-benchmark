@@ -76,6 +76,6 @@ if __name__ == "__main__":
 
     filepath = f"{args.uuid}_model.json"
     with open(str(filepath), "w") as file:
-        json.dump(output, file, indent=4)
+        json.dump(final_result, file, indent=4)
     
     print(f"{args.uuid} - model running - saved output for model run to file {filepath}")
