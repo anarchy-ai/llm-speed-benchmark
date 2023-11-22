@@ -6,7 +6,7 @@ import uuid
 import sys
 
 config = {
-    "time_delay": 2,
+    "time_delay": 0,
     "model": "bigscience/bloom-560m",
     "prompt": "Hello World!",
     "device": "cuda:0",
@@ -14,7 +14,9 @@ config = {
     "temperature": 0.9,
     "top_k": 50,
     "top_p": 0.9,
-    "num_return_sequences": 1
+    "num_return_sequences": 1,
+    "model_start_pause": 10,
+    "model_end_pause": 10
 }
 
 ID = str(uuid.uuid4())
@@ -27,14 +29,13 @@ current_script_path = os.path.dirname(os.path.abspath(__file__))
 # Path to the virtual environment's Python executable
 env_path = os.path.join(current_script_path, "env/bin/python3")
 
-# Time delay parameter (in seconds)
-time_delay = 2
-
 # Start the metrics.py script using the Python executable from the virtual environment with the time delay argument
 collecting_process = subprocess.Popen([env_path, os.path.join(current_script_path, "metrics.py"), 
                                        '--time-delay', str(config["time_delay"]),
                                        "--uuid", str(ID)
                                     ])
+
+time.sleep(config["model_start_pause"])
 
 ################################################################################################
 
@@ -55,6 +56,8 @@ model_running_process = subprocess.Popen([env_path, os.path.join(current_script_
 print("Waiting......")
 model_running_process.wait()
 print(".....Waiting Done!!!")
+
+time.sleep(config["model_end_pause"])
 
 # # Allow the subprocess to run for a certain amount of time
 # time.sleep(10)
