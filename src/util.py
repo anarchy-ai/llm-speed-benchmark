@@ -1,5 +1,6 @@
-import json
 import subprocess
+import json
+import os
 
 def execute(cmd):
     proc = subprocess.Popen(str(cmd), shell=True, stdout=subprocess.PIPE,)
@@ -31,3 +32,22 @@ def create_file(path):
     file = open(str(path), "a+")
     file.close()
 
+def get_id_files(id, dir_path):
+    if os.path.exists(dir_path) == False or os.path.isdir(dir_path) == False:
+        raise Exception(f"dir path {dir_path} does not exist!")
+    files = []
+    for f in os.listdir(dir_path):
+        full_path = os.path.join(dir_path, f)
+        if os.path.isfile(full_path) and (str(id) in f) and (".json" in full_path):
+            files.append(full_path)
+    return files
+
+def delete_file(file_path):
+    if os.path.isfile(file_path):
+        try:
+            os.remove(file_path)
+            print(f"deleted file {file_path}")
+        except Exception as e:
+            print(f"error! failed to delete file {file_path}")
+    else:
+        print(f"file {file_path} does not exist")
