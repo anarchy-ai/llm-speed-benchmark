@@ -1,101 +1,86 @@
-from transformers import AutoTokenizer
-from llm_vm.client import Client
+import threading
+from concurrent.futures import ThreadPoolExecutor
 import torch
-import json
 import time
+import json
+import os
+import sys
+import copy
+import gc
 
-models = {
-    "pythia": "EleutherAI/pythia-70m-deduped",
-    "opt": "facebook/opt-350m",
-    "bloom": "bigscience/bloom-560m",
-    "neo": "EleutherAI/gpt-neo-1.3B",
-    "smallorca": "Open-Orca/LlongOrca-7B-16k",
-    "orca": "Open-Orca/LlongOrca-13B-16k",
-    "mistral": "Open-Orca/Mistral-7B-OpenOrca",
-    "platypus": "Open-Orca/OpenOrca-Platypus2-13B",
-    "llama": "openlm-research/open_llama_3b_v2",
-    "llama2": "meta-llama/Llama-2-7b-hf",
-    "codellama-7b": "codellama/CodeLlama-7b-hf",
-    "codellama-13b": "codellama/CodeLlama-13b-hf",
-    "codellama-34b": "codellama/CodeLlama-34b-hf",
-    "flan": "google/flan-t5-small",
-    "bert": None,
-    "gpt": None,
-    "gpt4": None,
-    "chat_gpt": None,
-    "quantized-llama2-7b-base": "TheBloke/Llama-2-7B-GGML",
-    "quantized-llama2-13b-base": "TheBloke/Llama-2-13B-GGML",
-    "llama2-7b-chat-Q4": "TheBloke/Llama-2-7B-Chat-GGML",
-    "llama2-7b-chat-Q6": "TheBloke/Llama-2-7B-Chat-GGML",
-    "llama2-13b-chat-Q4": "TheBloke/Llama-2-13B-Chat-GGML",
-    "llama2-13b-chat-Q6": "TheBloke/Llama-2-13B-Chat-GGML",
-    "llama2-7b-32k-Q4": "TheBloke/Llama-2-7B-32K-Instruct-GGML"
-}
+current_script_path = os.path.dirname(os.path.abspath(__file__))
+subdir_path = os.path.join(current_script_path, "src")
+sys.path.append(subdir_path)
 
-"""
-ABOUT:
-    This function contains the official logic used by LLM-VM to pick a device (GPUs or CPUs)
-NOTES:
-    Update this function as need be, LLM-VM is constantly changing
-LAST-DATE:
-    November 15, 2023
-SOURCE:
-    https://github.com/anarchy-ai/LLM-VM/blob/main/src/llm_vm/onsite_llm.py
-    ~lines 45 - 49
-"""
-def llmvm_device_picker():
-    device = None
-    if torch.cuda.device_count() > 1:
-        device = [f"cuda:{i}" for i in range(torch.cuda.device_count())]  # List of available GPUs
-    else:  # If only one GPU is available, use cuda:0, else use CPU
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    return device
+import hw
+import hf
 
-def count_tokens(model_name, text):
-    # Load the tokenizer for the specified model
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    # Encode the text using the loaded tokenizer
-    encoded_input = tokenizer(text)
-
-    # Calculate the number of tokens by counting the input IDs
-    num_tokens = len(encoded_input['input_ids'])
-
-    return num_tokens
-
-def run(model_name, prompt, ):
-    if model_name not in models:
-        raise Exception("model {} is NOT supported in LLM-VM".format(model_name))
-    if type(models[model_name]) != str:
-        raise Exception("model {} is a close-sourced, API based, model".format(model_name))
-    if type(prompt) != str or len(prompt) == 0:
-        raise Exception("prompt MOST be type str and have a length greater then 0")
-
-    client = Client(big_model=str(model_name))
-    start_time = time.time()
-    response=client.complete(prompt=prompt)
-    runtime = time.time() - start_time
-
-    device = llmvm_device_picker()
-    huggingface_path = models[model_name]
-    tokens_in = count_tokens(huggingface_path, prompt)
-    tokens_out = count_tokens(huggingface_path, response["completion"])
-
+def gather_metrics(stop_event):
+    metrics = {}
+    while not stop_event.is_set():
+        timestamp = str(time.time())
+        print(f"logging {timestamp}")
+        metrics[timestamp] = hw.get_all()
+    print("COMPLETED METRICS GATHERING")
     return {
-        "model_name": model_name,
-        "model_path": huggingface_path,
-        "runtime_secs": runtime,
-        "prompt": prompt,
-        "response": response,
-        "tokens": {
-            "input": tokens_in,
-            "output": tokens_out
-        },
-        "tokens_out/sec": tokens_out / runtime,
-        "device": str(device)
+        "static": hw.get_all(True),
+        "history": metrics
     }
 
-# main function calls
-output = run("bloom", "hello world")
-# output = run("llama2", "hello my name is Jeff...")
-print(json.dumps(output, indent=4))
+def run_llm():
+    print(f"starting running LLM model...")
+    gc.disable()
+    start_time = time.time()
+    result = hf.run_llm("bigscience/bloom-560m", "Hello World!", "", {
+        "max_length": 50,
+        "temperature": 0.9,
+        "top_k": 50,
+        "top_p": 0.9,
+        "num_return_sequences": 1
+    })
+    end_time = time.time()
+    
+    # delete cachue and variables to free up resources for better metrics collecting
+    final_result = copy.deepcopy(result)
+    gc.collect()
+    gc.enable()
+    del result
+    torch.cuda.empty_cache()
+
+    print(f"...completed running LLM model")
+    return {
+        "model_output": final_result,
+        "start_time": start_time,
+        "end_time": end_time
+    }
+
+# event object used to signal when to stop gathering metrics
+stop_event = threading.Event()
+
+if __name__ == "__main__":
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        metrics_future = executor.submit(gather_metrics, stop_event)
+        
+        # pre-model run pause for performace gathering
+        time.sleep(5)
+        
+        llm_future = executor.submit(run_llm)
+
+        # get results from model run
+        llm_results = llm_future.result()
+        
+        # post-model run pause for performace gathering
+        time.sleep(20)
+
+        # tell metrics collector to stop
+        stop_event.set()
+
+        # get results from metrics collector
+        metrics_results = metrics_future.result()
+
+        # print results
+        x = {
+            "llm": llm_results,
+            "metrics": metrics_results
+        }
+        print(json.dumps(x, indent=4, ensure_ascii=False))

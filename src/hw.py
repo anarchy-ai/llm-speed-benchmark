@@ -15,20 +15,23 @@ https://thepythoncode.com/article/get-hardware-system-information-python
 November 20, 2023
 """
 
+import subprocess
 import psutil
 import platform
 import GPUtil
-import subprocess
 import json
 
-import util
+def execute(cmd):
+    proc = subprocess.Popen(str(cmd), shell=True, stdout=subprocess.PIPE,)
+    output = proc.communicate()[0].decode("utf-8")
+    return output.split("\n")
 
 def neofetch():
     # requires neofetch (https://github.com/dylanaraps/neofetch)
     cmd = "neofetch --stdout"
     output = {}
     try:
-        stdout = util.execute(cmd)
+        stdout = execute(cmd)
         for line in stdout:
             if ": " not in line:
                 continue
@@ -70,9 +73,9 @@ def system_info(native=True):
     }
 
 def cpu_info(options={}):
-    model_name = options.get("model")
-    if model_name == None:
-        model_name = neofetch()["cpu"]
+    # model_name = options.get("model")
+    # if model_name == None:
+    #     model_name = neofetch()["cpu"]
     
     cores = None
     if options.get("cores") == True:
@@ -83,7 +86,7 @@ def cpu_info(options={}):
     cpufreq = psutil.cpu_freq()
 
     output = {
-        "model": str(model_name),
+        # "model": str(model_name),
         "physical_cores": psutil.cpu_count(logical=False),
         "total_cores": psutil.cpu_count(logical=True),
         "max_frequency": f"{cpufreq.max:.2f}Mhz",
@@ -152,6 +155,7 @@ def gpu_info(raw=False):
                 "id": gpu.id,
                 "uuid": gpu.uuid,
                 "name": gpu.name,
+                "driver": gpu.driver,
                 "load": f"{gpu.load*100}%",
                 "memory": {
                     "free": f"{gpu.memoryFree}MB",
@@ -161,6 +165,20 @@ def gpu_info(raw=False):
                 "temp": f"{gpu.temperature} °C"
             }
     return gpus_data
+
+def get_all(static_only=False):
+    if static_only:
+        return {
+            "system": system_info(),
+            "neofetch": system_info(False)
+        }
+    
+    return {
+        "cpu": cpu_info({"cores": True}),
+        "ram": memory_info(),
+        "disk": disk_info(),
+        "gpu": gpu_info()
+    }
 
 # MAIN FUNCTION CALLS
 if __name__ == "__main__":
@@ -173,5 +191,5 @@ if __name__ == "__main__":
         "disk": disk_info(),
         "gpu": gpu_info()
     }
-    print(json.dumps(all_data, indent=4))
+    print(json.dumps(all_data, indent=4, ensure_ascii=False))
 
