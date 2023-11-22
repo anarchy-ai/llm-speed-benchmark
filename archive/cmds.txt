@@ -1,4 +1,0 @@
-cat ./LLM-VM/src/llm_vm/onsite_llm.py | grep "@Reg" | tr '"' " " | awk '{print $2}'
-
-cat ./LLM-VM/src/llm_vm/onsite_llm.py | grep "@RegisterModelClass\|model_uri" | grep "@RegisterModelClass\|/" | grep -v ".split"
-
