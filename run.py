@@ -22,7 +22,7 @@ parser.add_argument('--loops', type=int, default=1, help='number of times the pe
 def main(name=None, config_path=None):
     ID = str(uuid.uuid4())
 
-    logger.info(f"This performance run's ID is {ID} with name={name}")
+    logger.info(f"This performance run's ID is {ID} with name={name}", True)
 
     # Get the current script path
     current_script_path = os.path.dirname(os.path.abspath(__file__))
@@ -30,22 +30,21 @@ def main(name=None, config_path=None):
     if config_path == None:
         config_path = os.path.join(current_script_path, "config.json")
     elif os.path.isfile(str(config_path)) == False:
-        logger.error(f"[{ID}] Config path {config_path} does not exist! Existing...")
+        logger.error(f"[{ID}] Config path {config_path} does not exist! Existing...", True)
         sys.exit(1)
 
     config = util.read_json(config_path)
-    logger.info(f"[{ID}] Loaded config file {config_path} for this benchmark run, with the following configuration: {config}")
+    logger.info(f"[{ID}] Loaded config file {config_path} for this benchmark run, with the following configuration: {config}", True)
 
     env_path = os.path.join(current_script_path, "env/bin/python3")
     if os.path.isfile(env_path) == False:
-        msg = f"[{ID}] python environment {env_path} does not exist, please create it!"
-        logger.critical(msg, True)
+        logger.critical(f"[{ID}] python environment {env_path} does not exist, please create it!", True)
         sys.exit(1)
 
-    logger.info(f"[{ID}] checking if model exists and is downloaded locally...")
+    logger.info(f"[{ID}] checking if model exists and is downloaded locally...", True)
     local_hf_exists = hf.get_hf_model(str(config["model"]))
     if local_hf_exists == False:
-        logger.critical(f"[{ID}] failed to download model {config['model']}, please look into this, existing...")
+        logger.critical(f"[{ID}] failed to download model {config['model']}, please look into this, existing...", True)
         sys.exit(1)
 
     ################################################################################################
@@ -63,7 +62,7 @@ def main(name=None, config_path=None):
 
     ################################################################################################
 
-    logger.info(f"[{ID}] Initiated {config['model_start_pause']} pre model start to gather hardware metrics BEFORE the model is activated", True)
+    logger.info(f"[{ID}] Initiated {config['model_start_pause']} second pre model start to gather hardware metrics BEFORE the model is activated", True)
     time.sleep(config["model_start_pause"])
 
     ################################################################################################
@@ -95,10 +94,10 @@ def main(name=None, config_path=None):
     model_running_process.wait()
     logger.info(f"[{ID}] model {config['model']} finished running! no longer waiting!", True)
 
-    logger.info(f"[{ID}] Initiated {config['model_start_pause']} post model end to gather hardware metrics AFTER the model has completed it's run time", True)
+    logger.info(f"[{ID}] Initiated {config['model_start_pause']} second post model end to gather hardware metrics AFTER the model has completed it's run time", True)
     time.sleep(config["model_end_pause"])
 
-    logger.info(f"[{ID}] Kill signal has been sent to metrics collector, is should finish running soon...")
+    logger.info(f"[{ID}] Kill signal has been sent to metrics collector, is should finish running soon...", True)
     collecting_process.send_signal(signal.SIGTERM)
     collecting_process.wait()
 
@@ -116,7 +115,7 @@ def main(name=None, config_path=None):
         elif "_model.json" in file:
             model_data = file
         else:
-            logger.critical(f"[{ID}] Of the expected data output files, this file has an unexpected file 'extension': {file}")
+            logger.critical(f"[{ID}] Of the expected data output files, this file has an unexpected file 'extension': {file}", True)
             sys.exit(1)
 
     final_data_path = f"report_{ID}.json"
@@ -163,5 +162,5 @@ if __name__ == "__main__":
         filepath = main(name=i_name, config_path=args.config_path)
         all_filepaths.append(filepath)
     
-    logger.info(f"==> Muli-Run completed for performance benchmark. A total of {args.loops} runs we done and the following data was exported: {all_filepaths}")
+    logger.info(f"==> Muli-Run completed for performance benchmark. A total of {args.loops} runs we done and the following data was exported: {all_filepaths}", True)
     sys.exit(0)
