@@ -22,68 +22,71 @@ BLPT is on v0, so it has limitations:
 ## Setup
 
 1. Create and activate python environment:
-  ```
-  python3 -m venv env
-  source env/bin/activate
-  ```
+    ```
+    python3 -m venv env
+    source env/bin/activate
+    ```
 
 2. Install package dependencies (using APT):
-  ```
-  apt -y update
-  apt install -y vim
-  apt install -y neofetch
-  ```
+    ```
+    apt -y update
+    apt install -y vim
+    apt install -y neofetch
+    ```
 
 3. Install python dependencies:
-  ```
-  pip3 install transformers
-  pip3 install psutil
-  pip3 install gputil
-  pip3 install tabulate
-  ```
+    ```
+    pip3 install transformers
+    pip3 install psutil
+    pip3 install gputil
+    pip3 install tabulate
+    ```
 
 4. Install Pytorch (to determine how to install Pytorch for your system, checkout their tool on: https://pytorch.org/):
-  ```
-  # install pytorch stable build, for linux, using CUDA 12.1:
-  pip3 install torch torchvision torchaudio
-  ```
+    ```
+    # install pytorch stable build, for linux, using CUDA 12.1:
+    pip3 install torch torchvision torchaudio
+    ```
 
 5. (optional) If you are using models like LLAMA, you will need a HuggingFace access token. Setup your access token [HERE](https://huggingface.co/settings/tokens) then save your token to your console by running the following command:
-  ```
-  huggingface-cli login
-  ```
+    ```
+    huggingface-cli login
+    ```
 
 ## How To Run
 
 1. Complete the steps listed in the __Setup__ section.
-2. Set your parameters for the run in the config.json file. An example config.json file is provided, these are what the parameters mean:
-  ```
-  {
-    "model": "bigscience/bloom-560m",   # the model's path/repo on HuggingFace (https://huggingface.co/models)
-    "prompt": "Hello World!",           # the prompt you want to input into the LLM model
-    "device": "cuda:0",                 # the device you want to run the LLM model on (GPU/CPU)
-    "max_length": 50,                   # the maximun length of the generated tokens
-    "temperature": 0.9,                 # temperatue value for the LLM model
-    "top_k": 50,                        # top-k value for the LLM model
-    "top_p": 0.9,                       # top-p value for the LLM model
-    "num_return_sequences": 1,          # the number of independently ran instances of the model
-    "time_delay": 0,                    # the time delay (seconds) the metrics-collecter will wait per interation
-    "model_start_pause": 1,             # the time (seconds) the test will wait BEFORE running the LLM model
-    "model_end_pause": 1                # the time (seconds) the test will wait AFTER the LLM model is done running
-  } 
-  ```
-3. Run the script (pick one option)
-  ```
-  # run one benchmark
-  python3 run.py
 
-  # run more then one benchmark (in this case 3)
-  python3 run.py --loops 3
-  ```
+2. Set your parameters for the run in the config.json file. An example config.json file is provided, these are what the parameters mean:
+    ```
+    {
+      "model": "bigscience/bloom-560m",   # the model's path/repo on HuggingFace (https://huggingface.co/models)
+      "prompt": "Hello World!",           # the prompt you want to input into the LLM model
+      "device": "cuda:0",                 # the device you want to run the LLM model on (GPU/CPU)
+      "max_length": 50,                   # the maximun length of the generated tokens
+      "temperature": 0.9,                 # temperatue value for the LLM model
+      "top_k": 50,                        # top-k value for the LLM model
+      "top_p": 0.9,                       # top-p value for the LLM model
+      "num_return_sequences": 1,          # the number of independently ran instances of the model
+      "time_delay": 0,                    # the time delay (seconds) the metrics-collecter will wait per interation
+      "model_start_pause": 1,             # the time (seconds) the test will wait BEFORE running the LLM model
+      "model_end_pause": 1                # the time (seconds) the test will wait AFTER the LLM model is done running
+    } 
+    ```
+
+3. Run the script (pick one option)
+    ```
+    # run one benchmark
+    python3 run.py
+
+    # run more then one benchmark (in this case 3)
+    python3 run.py --loops 3
+    ```
+
 4. After the benchmark is done running, check out the final results in a file that should look something like this:
-  ```
-  report_8b7ada70-96d9-484a-93fb-c5c9ca92d15d.json
-  ```
+    ```
+    report_8b7ada70-96d9-484a-93fb-c5c9ca92d15d.json
+    ```
 
 ## Great Sources:
 - Great datasets of prompts (if you can't come up with any):
