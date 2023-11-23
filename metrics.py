@@ -8,6 +8,7 @@ import uuid
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import hw
+import logger
 
 # config arguments
 parser = argparse.ArgumentParser(description='run hardware performance/metrics collector')
@@ -28,18 +29,22 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)
 
+    logger.info(f"{args.uuid} - metrics collection has started...")
+
     metrics = {}
     counter = 0
     while running:
         timestamp = str(time.time())
         metrics[timestamp] = hw.get_all()
-        print(f"{args.uuid} - metrics collector - Collected metrics for the {counter+1} time, now waiting for {args.time_delay} sec")
+        logger.info(f"{args.uuid} - metrics collector - Collected metrics for the {counter+1} time, now waiting for {args.time_delay} sec")
         counter += 1
         time.sleep(args.time_delay)
+
+    logger.info(f"{args.uuid} - metrics collecton has concluded!")
 
     filepath = f"{args.uuid}_metrics.json"
     with open(str(filepath), "w") as file:
         json.dump(metrics, file, indent=4)
 
-    print(f"{args.uuid} - metrics collector - Saved {len(metrics.keys())} data points to file {filepath}")
+    logger.info(f"{args.uuid} - metrics collector - Saved {len(metrics.keys())} data points to file {filepath}")
 

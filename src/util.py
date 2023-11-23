@@ -2,6 +2,8 @@ import subprocess
 import json
 import os
 
+import logger
+
 def execute(cmd):
     proc = subprocess.Popen(str(cmd), shell=True, stdout=subprocess.PIPE,)
     output = proc.communicate()[0].decode("utf-8")
@@ -46,8 +48,8 @@ def delete_file(file_path):
     if os.path.isfile(file_path):
         try:
             os.remove(file_path)
-            print(f"deleted file {file_path}")
-        except Exception as e:
-            print(f"error! failed to delete file {file_path}")
+            logger.info(f"deleted file {file_path}")
+        except Exception as err:
+            logger.error(f"error! failed to delete file {file_path}")
     else:
-        print(f"file {file_path} does not exist")
+        logger.info(f"file {file_path} does not exist")

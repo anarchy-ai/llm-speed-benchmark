@@ -5,6 +5,8 @@ import torch
 import time
 import os
 
+import logger
+
 def count_tokens(model_name, text):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     encoded_input = tokenizer(text)
@@ -98,30 +100,21 @@ def get_hf_model(hf_repo_path):
     try:
         api.list_repo_files(hf_repo_path)
     except Exception as err:
-        return { 
-            "msg": f"failed to check if model {hf_repo_path} exists on HuggingFace due to error: {err}", 
-            "status": False 
-        }
+        logger.error(f"failed to check if model {hf_repo_path} exists on HuggingFace due to error: {err}")
+        return False
     
     # quick & dirty way to check if hf model/repo has been downloaded, saved to cache directory
     cache_dir = os.path.join(os.path.expanduser('~'), ".cache/huggingface/hub/")
     model_cache_dir = os.path.join(cache_dir, "models--{}".format(hf_repo_path.replace("/", "--")))
     if os.path.isdir(model_cache_dir):
-        return { 
-            "msg": f"model {hf_repo_path} already exists in directory {model_cache_dir}", 
-            "status": True
-        }
+        logger.info(f"model {hf_repo_path} already exists in directory {model_cache_dir}")
+        return True
     
     # download hf model/repo if it's not downloaded
     try:
         snapshot_download(repo_id=hf_repo_path, repo_type="model", token=True)
-        return { 
-            "msg": f"downloaded model {hf_repo_path}", 
-            "status": True
-        }
+        logger.info(f"downloaded model {hf_repo_path}")
+        return True
     except Exception as err:
-        return { 
-            "msg": f"{err}", 
-            "status": False 
-        }
-
+        logger.error(f"{err}")
+        return False
