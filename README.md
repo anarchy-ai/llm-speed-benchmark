@@ -4,7 +4,7 @@
   <img width="300" src="./assets/docs/logo.png">
 </p>
 
-🚧 BenchLLM is currently in beta (v0). Please do not use this in production, or use it at your own risk. We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under ISSUES. Your feedback is invaluable!
+🚧 BenchLLM is currently in beta (v0). Please do not use this in production, or use it at your own risk. We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under [ISSUES](https://github.com/anarchy-ai/benchllm/issues). Your feedback is invaluable!
 
 ## About
 
