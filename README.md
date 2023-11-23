@@ -1,4 +1,8 @@
-# benchllm
+# Benchmark LLM Performance Tool (BLPT)
+
+<p align="center">
+  <img width="300" src="./assets/docs/logo.png">
+</p>
 
 ## Prompt Datasets To Checkout:
 
