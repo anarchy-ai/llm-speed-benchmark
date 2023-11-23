@@ -19,6 +19,14 @@ BenchLLM is on v0, so it has limitations:
 - Currently, all models are ran though the logic presented in the run_llm() function, located in src/hf.py, where the functions AutoTokenizer() and AutoModelForCausalLM() are used to load and run a model. This works but it limits how we can config/optmize specific models. Knowing this, the goal is to create seperate classes for each popular model and utilize HuggingFace's model specifc classes, like LlamaTokenizer & LlamaForCausalLM, instead.
 - BenchLLM only gathers general, high level, metrics. In the future, we would like to gather lower level metrics. We think this can partly be done using Pytorch's [porfiler wrapper](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
 
+## Sample Outputs
+
+### November 22, 2023
+
+BenchLLM was ran/test on a L40 and H100 GPU though [RunPod](https://www.runpod.io/). In those benchmarks the models [llama-2-7b-hf](https://huggingface.co/meta-llama/Llama-2-7b-hf), [codellama-13b-oasst-sft-v10](https://huggingface.co/OpenAssistant/codellama-13b-oasst-sft-v10), & [mpt-7b](https://huggingface.co/mosaicml/mpt-7b) where tested.
+
+Checkout the results [HERE](https://github.com/MehmetMHY/benchllm/tree/main/assets/docs/sample_results). If any errors/issues are noticed, please repport them to ISSUES. 
+
 ## Setup
 
 1. Create and activate python environment:
