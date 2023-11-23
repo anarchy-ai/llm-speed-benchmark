@@ -15,14 +15,22 @@ logging.basicConfig(level=logging.DEBUG,
 
 logging.Formatter.converter = time.gmtime
 
-def info(msg):
+def info(msg, print_it=False):
     logging.info(msg)
+    if print_it:
+        print(msg)
 
-def warning(msg):
+def warning(msg, print_it=False):
     logging.warning(msg)
+    if print_it:
+        print(msg)
 
-def error(msg):
+def error(msg, print_it=False):
     logging.error(msg)
+    if print_it:
+        print(msg)
 
-def critical(msg):
+def critical(msg, print_it=False):
     logging.critical(msg)
+    if print_it:
+        print(msg)
