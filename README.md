@@ -95,3 +95,6 @@ BenchLLM is on v0, so it has limitations:
   - https://www.kaggle.com/datasets/ratthachat/writing-prompts
 - Learn more about LLM parameters: https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig
 - Great benchmark to benchmark cloud-based LLM models: https://github.com/ray-project/llmperf
+- Cool LLM intelligence leadboards:
+    - https://fasteval.github.io/FastEval/
+    - https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard

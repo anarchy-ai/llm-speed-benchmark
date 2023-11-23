@@ -28,7 +28,8 @@ def read_json(path):
 
 def write_json(path, data):
     with open(str(path), "w") as file:
-        json.dump(data, file, indent=4)
+        # NOTE: ensure_ascii will write unicode characters as they are
+        json.dump(data, file, indent=4, ensure_ascii=False)
 
 def create_file(path):
     file = open(str(path), "a+")
