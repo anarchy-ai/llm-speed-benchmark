@@ -13,7 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import hf
 import logger
 
-parser = argparse.ArgumentParser(description='run hardware performance/metrics collector')
+parser = argparse.ArgumentParser(description='run llm model hosted on HuggingFace')
 
 """
 November 21, 2023
