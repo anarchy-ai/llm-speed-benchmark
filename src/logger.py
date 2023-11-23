@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import time
 import os
@@ -15,22 +16,26 @@ logging.basicConfig(level=logging.DEBUG,
 
 logging.Formatter.converter = time.gmtime
 
+def logger_printer(msg):
+    utc_timestamp = datetime.utcnow().timestamp()
+    print(f"{utc_timestamp} - {msg}")
+
 def info(msg, print_it=False):
     logging.info(msg)
     if print_it:
-        print(msg)
+        logger_printer(msg)
 
 def warning(msg, print_it=False):
     logging.warning(msg)
     if print_it:
-        print(msg)
+        logger_printer(msg)
 
 def error(msg, print_it=False):
     logging.error(msg)
     if print_it:
-        print(msg)
+        logger_printer(msg)
 
 def critical(msg, print_it=False):
     logging.critical(msg)
     if print_it:
-        print(msg)
+        logger_printer(msg)
