@@ -40,6 +40,8 @@ BenchLLM is on v0, so it has limitations:
     pip3 install psutil
     pip3 install gputil
     pip3 install tabulate
+    pip3 install sentencepiece
+    pip3 install protobuf
     ```
 
 4. Install Pytorch (to determine how to install Pytorch for your system, checkout their tool on: https://pytorch.org/):
