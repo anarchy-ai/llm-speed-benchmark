@@ -1,23 +1,23 @@
-# Benchmark LLM Performance Tool (BLPT)
+# BenchLLM
 
 <p align="center">
   <img width="300" src="./assets/docs/logo.png">
 </p>
 
-🚧 BLPT is currently in beta (v0). We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under ISSUES. Your feedback is invaluable!
+🚧 BenchLLM is currently in beta (v0). We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under ISSUES. Your feedback is invaluable!
 
 ## About
 
-BLPT is a benchmarking tool for assessing LLM models' performance across different hardware platforms. Its ultimate goal is to compile a comprehensive dataset detailing LLM models' performance on various systems, enabling users to more effectively choose the right LLM model(s) for their projects.
+BenchLLM is a benchmarking tool for assessing LLM models' performance across different hardware platforms. Its ultimate goal is to compile a comprehensive dataset detailing LLM models' performance on various systems, enabling users to more effectively choose the right LLM model(s) for their projects.
 
 ## Limtations
 
-BLPT is on v0, so it has limitations:
-- Only designed to run on debian based operating systems, aka it's not designed to run on Windows. This is because BLPT uses neofetch and nvidia-smi to gather metrics under the hood and the filepath logic is based on unix operating systems.
+BenchLLM is on v0, so it has limitations:
+- Only designed to run on debian based operating systems, aka it's not designed to run on Windows. This is because BenchLLM uses neofetch and nvidia-smi to gather metrics under the hood and the filepath logic is based on unix operating systems.
 - Due to how metrics are recorded, it can take the metrics collector up to 1 second to do a collection. This means that, at the fast, we can collect hardware metrics every 1 second.
-- BLPT only uses HuggingFace to load and run models. This works for now, but the goal is to have BLPT support muliple frameworks, not just HuggingFace.
+- BenchLLM only uses HuggingFace to load and run models. This works for now, but the goal is to have BenchLLM support muliple frameworks, not just HuggingFace.
 - Currently, all models are ran though the logic presented in the run_llm() function, located in src/hf.py, where the functions AutoTokenizer() and AutoModelForCausalLM() are used to load and run a model. This works but it limits how we can config/optmize specific models. Knowing this, the goal is to create seperate classes for each popular model and utilize HuggingFace's model specifc classes, like LlamaTokenizer & LlamaForCausalLM, instead.
-- BLPT only gathers general, high level, metrics. In the future, we would like to gather lower level metrics. We think this can partly be done using Pytorch's [porfiler wrapper](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
+- BenchLLM only gathers general, high level, metrics. In the future, we would like to gather lower level metrics. We think this can partly be done using Pytorch's [porfiler wrapper](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
 
 ## Setup
 
