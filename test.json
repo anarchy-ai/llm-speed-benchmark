@@ -2,6 +2,7 @@
     "model": "facebook/opt-iml-max-1.3b",
     "prompt": "Hello World!",
     "device": "cuda:0",
+    
     "max_length": 1000,
     "temperature": 0.9,
     "top_k": 50,

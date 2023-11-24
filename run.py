@@ -137,6 +137,7 @@ def main(name=None, config_path=None):
     final_dataset = {
         "model": util.read_json(model_data),
         "test_env": {
+            "verison": SETTINGS["version"],
             "commit": util.get_current_commit(),
             "hardware": hw.get_all(static_only=True)
         },

@@ -9,7 +9,7 @@ import glob
 
 def pick_json_file(parent_directory):
     # list all files in the parent directory that have a .json extension.
-    json_files = glob.glob(os.path.join(parent_directory, '*.json'))
+    json_files = glob.glob(os.path.join(parent_directory, 'reports/*.json'))
     json_files = [string for string in json_files if "report" in string]
     
     # display the JSON files.
