@@ -1,8 +1,8 @@
 {
-    "model": "bigscience/bloom-560m",
+    "model": "facebook/opt-iml-max-1.3b",
     "prompt": "Hello World!",
     "device": "cuda:0",
-    "max_length": 50,
+    "max_length": 1000,
     "temperature": 0.9,
     "top_k": 50,
     "top_p": 0.9,
@@ -10,5 +10,6 @@
 
     "time_delay": 0,
     "model_start_pause": 1,
-    "model_end_pause": 1
+    "model_end_pause": 1,
+    "dtype": "bfloat16"
 }

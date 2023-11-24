@@ -17,10 +17,42 @@ def validate_options(options, valid_keys):
     user_keys = set(options.keys())
     return user_keys.issubset(valid_keys)
 
-def run_llm(model_name, input, device="", model_params={}):
+def str_to_torch_dtype(dtype_str):
+    dtype_map = {
+        'float32': torch.float32,
+        'float': torch.float,
+        'float64': torch.float64,
+        'double': torch.double,
+        'float16': torch.float16,
+        'half': torch.half,
+        'bfloat16': torch.bfloat16,
+        'int8': torch.int8,
+        'uint8': torch.uint8,
+        'int16': torch.int16,
+        'short': torch.short,
+        'int32': torch.int32,
+        'int': torch.int,
+        'int64': torch.int64,
+        'long': torch.long,
+        'bool': torch.bool,
+        'complex64': torch.complex64,
+        'complex128': torch.complex128,
+        'cdouble': torch.cdouble,
+        'quint8': torch.quint8,
+        'qint8': torch.qint8,
+        'qint32': torch.qint32,
+        'quint4x2': torch.quint4x2
+    }
+    return dtype_map.get(dtype_str, None)
+
+def run_llm(model_name, input, device="", dtype="bfloat16", model_params={}):
     valid_model_params = {"max_length", "temperature", "top_k", "top_p", "num_return_sequences"}
     if model_params != {} and validate_options(model_params, valid_model_params) == False:
         raise Exception(f"model_params only accepts the following keys: {model_params.keys()}")
+    
+    dtype_torch = str_to_torch_dtype(dtype)
+    if dtype_torch == None:
+        raise Exception(f"{dtype} is NOT a valid dtype supported by Pytorch")
     
     # TODO: currently this function only supports one GPU, the goal will be to update this to support muliple GPU(s)
     if "cuda:" not in device and device != "cpu" and device != "":
@@ -43,7 +75,8 @@ def run_llm(model_name, input, device="", model_params={}):
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
+    model = model.to(device).to(dtype_torch)
 
     model_dtype = next(model.parameters()).dtype
 
