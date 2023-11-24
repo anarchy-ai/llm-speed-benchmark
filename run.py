@@ -78,7 +78,8 @@ def main(name=None, config_path=None):
                                                 "--uuid", str(ID),
                                                 "--prompt", str(config["prompt"]),
                                                 "--model", str(config["model"]),
-                                                "--device", str(config["device"])
+                                                "--device", str(config["device"]),
+                                                "--dtype", str(config["dtype"])
                                                 ])
         logger.info(f"[{ID}] model {config['model']} is running with a PID of {model_running_process.pid}", True)
     except Exception as err:

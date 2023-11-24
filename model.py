@@ -30,6 +30,7 @@ parser.add_argument('--uuid', type=str, default=str(uuid.uuid4()), help='The UUI
 parser.add_argument('--prompt', type=str, default="Hello World", help='Text prompt for the LLM model to respond too')
 parser.add_argument('--model', type=str, default="", help='Huggingface repo/path to LLM model')
 parser.add_argument('--device', type=str, default="", help='Device to run the model on, this can be "cpu" or "cuda:N"')
+parser.add_argument('--dtype', type=str, default="bfloat16", help="A tensor's data type, this will effect the overall accuracy and hardware performance for a model")
 
 # signal handler
 def signal_handler(signum, frame):
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     logger.info(f"{args.uuid} - model {args.model} started at epoch time {start_time} seconds")
     
     try:
-        output = hf.run_llm(args.model, args.prompt, args.device, {
+        output = hf.run_llm(args.model, args.prompt, args.device, args.dtype, {
             "max_length": args.max_length,
             "temperature": args.temperature,
             "top_k": args.top_k,
