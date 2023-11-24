@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import subprocess
 import argparse
 import time
@@ -12,6 +13,8 @@ import logger
 import util
 import hf
 import hw
+
+SETTINGS = util.read_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json"))
 
 # config arguments
 parser = argparse.ArgumentParser(description='Run performance benchmark for an LLM model')
@@ -28,7 +31,7 @@ def main(name=None, config_path=None):
     current_script_path = os.path.dirname(os.path.abspath(__file__))
 
     if config_path == None:
-        config_path = os.path.join(current_script_path, "config.json")
+        config_path = os.path.join(current_script_path, "test.json")
     elif os.path.isfile(str(config_path)) == False:
         logger.error(f"[{ID}] Config path {config_path} does not exist! Existing...", True)
         sys.exit(1)
@@ -36,6 +39,7 @@ def main(name=None, config_path=None):
     config = util.read_json(config_path)
     logger.info(f"[{ID}] Loaded config file {config_path} for this benchmark run, with the following configuration: {config}", True)
 
+    # NOTE: make sure a python environment named "env" is created in the same repo as this script
     env_path = os.path.join(current_script_path, "env/bin/python3")
     if os.path.isfile(env_path) == False:
         logger.critical(f"[{ID}] python environment {env_path} does not exist, please create it!", True)
@@ -125,14 +129,17 @@ def main(name=None, config_path=None):
         os.makedirs(reports_path)
 
     # build filepath for final report file
-    final_data_path = f"report_{ID}.json"
+    final_data_path = f'report_{datetime.now(timezone.utc).strftime("%Y-%m-%d_%H:%M:%S.%f_utc")}_{ID}.json'
     if name != None:
         final_data_path = f"{name}_{final_data_path}"    
     final_data_path = os.path.join(reports_path, final_data_path)
 
     final_dataset = {
-        "hardware": hw.get_all(static_only=True),
         "model": util.read_json(model_data),
+        "test_env": {
+            "commit": util.get_current_commit(),
+            "hardware": hw.get_all(static_only=True)
+        },
         "metric": util.read_json(metrics_data)
     }
 
@@ -157,10 +164,16 @@ if __name__ == "__main__":
     if loops < 1:
         raise Exception(f"loops MOST be greater then or equal to 1!")
 
+    # single benchmark run
     if loops <= 1:
+        start_time = time.time()
         main(name=args.name, config_path=args.config_path)
+        runtime = time.time() - start_time
+        logger.info(f"(single) Total Runtime: {runtime} seconds", True)
         sys.exit(0)
 
+    # multiple benchmark runs
+    start_time = time.time()
     all_filepaths = []
     for i in range(int(args.loops)):
         i_name = f"run_{i}"
@@ -169,6 +182,8 @@ if __name__ == "__main__":
         logger.info(f"Run {i+1}/{args.loops} for performance benchmark", True)
         filepath = main(name=i_name, config_path=args.config_path)
         all_filepaths.append(filepath)
-    
     logger.info(f"==> Muli-Run completed for performance benchmark. A total of {args.loops} runs we done and the following data was exported: {all_filepaths}", True)
+    runtime = time.time() - start_time
+    logger.info(f"(multiple) Total Runtime: {runtime} seconds", True)
+    
     sys.exit(0)
