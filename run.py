@@ -119,9 +119,16 @@ def main(name=None, config_path=None):
             logger.critical(f"[{ID}] Of the expected data output files, this file has an unexpected file 'extension': {file}", True)
             sys.exit(1)
 
+    # create reports/ directory if it does not exist
+    reports_path = os.path.join(current_script_path, "reports")
+    if not os.path.exists(reports_path):
+        os.makedirs(reports_path)
+
+    # build filepath for final report file
     final_data_path = f"report_{ID}.json"
     if name != None:
-        final_data_path = f"{name}_{final_data_path}"
+        final_data_path = f"{name}_{final_data_path}"    
+    final_data_path = os.path.join(reports_path, final_data_path)
 
     final_dataset = {
         "hardware": hw.get_all(static_only=True),

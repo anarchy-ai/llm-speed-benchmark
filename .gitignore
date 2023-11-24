@@ -170,4 +170,5 @@ report_*.json
 results/
 events.log
 *run_*.json
+reports/
 
