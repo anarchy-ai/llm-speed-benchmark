@@ -4,6 +4,7 @@ import torch
 import time
 import sys
 import os
+import subprocess
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, "src")])
@@ -13,6 +14,16 @@ SETTING = util.read_json(os.path.join(ROOT_DIR, "config.json"))
 
 # NOTE: are of 11-24-2023 these are the current models supported in LLM-VM
 SUPPORTED_MODELS = SETTING["supported_frameworks"]["llm-vm"]["supported_models"]
+
+
+def get_current_llmvm_commit():
+    try:
+        path = os.path.join(ROOT_DIR, "src/LLM-VM/.git")
+        output = subprocess.check_output("git log | head -n 1 | awk '{print $2}'", shell=True, cwd=path, universal_newlines=True)
+        output = str(output).replace("\n", "").replace(" ", "")
+        return output
+    except:
+        return ""
 
 """
 ABOUT:
@@ -75,6 +86,7 @@ def run_llm(model_name, prompt, model_params={}):
     huggingface_path = SUPPORTED_MODELS[model_name]
     tokens_in = count_tokens(huggingface_path, prompt)
     tokens_out = count_tokens(huggingface_path, response["completion"])
+    llmvm_commit = get_current_llmvm_commit()
 
     return {
         "model_name": model_name,
@@ -88,13 +100,8 @@ def run_llm(model_name, prompt, model_params={}):
         },
         "tokens_out/sec": tokens_out / runtime,
         "device": str(device),
+        "llm_vm_commit": llmvm_commit,
         "model_params": {
             "temperature": temp
         }
     }
-
-# main function calls
-import json
-output = run_llm("bloom", "hello world")
-# output = run("llama2", "hello my name is Jeff...")
-print(json.dumps(output, indent=4))
