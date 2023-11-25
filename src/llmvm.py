@@ -12,11 +12,6 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__
 sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, "src")])
 import util
 
-SETTING = util.read_json(os.path.join(ROOT_DIR, "config.json"))
-
-# NOTE: are of 11-24-2023 these are the current models supported in LLM-VM
-SUPPORTED_MODELS = SETTING["supported_frameworks"]["llm-vm"]["supported_models"]
-
 # get the latest commit from the local LLM-VM install
 def get_current_llmvm_commit():
     try:
@@ -52,12 +47,10 @@ def count_tokens(model_name, text):
     num_tokens = len(encoded_input['input_ids'])
     return num_tokens
 
-def run_llm(model_name, prompt, model_params={}):
-    global SUPPORTED_MODELS
-
-    if model_name not in SUPPORTED_MODELS:
+def run_llm(model_name, prompt, supported_models, model_params={}):
+    if model_name not in supported_models:
         raise Exception("model {} is NOT supported in LLM-VM".format(model_name))
-    if type(SUPPORTED_MODELS[model_name]) != str:
+    if type(supported_models[model_name]) != str:
         raise Exception("model {} is a close-sourced, API based, model".format(model_name))
     if type(prompt) != str or len(prompt) == 0:
         raise Exception("prompt MOST be type str and have a length greater then 0")
@@ -87,7 +80,7 @@ def run_llm(model_name, prompt, model_params={}):
     runtime = time.time() - start_time
 
     device = llmvm_device_picker()
-    huggingface_path = SUPPORTED_MODELS[model_name]
+    huggingface_path = supported_models[model_name]
     tokens_in = count_tokens(huggingface_path, prompt)
     tokens_out = count_tokens(huggingface_path, response["completion"])
     llmvm_commit = get_current_llmvm_commit()

@@ -14,8 +14,6 @@ import util
 import hf
 import hw
 
-SETTINGS = util.read_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ponfig.json"))
-
 # config arguments
 parser = argparse.ArgumentParser(description='Run performance benchmark for an LLM model')
 parser.add_argument('--name', type=str, default=None, help='name of this performance benchmark run')
@@ -45,11 +43,11 @@ def main(name=None, config_path=None):
         logger.critical(f"[{ID}] python environment {env_path} does not exist, please create it!", True)
         sys.exit(1)
 
-    logger.info(f"[{ID}] checking if model exists and is downloaded locally...", True)
-    local_hf_exists = hf.get_hf_model(str(config["model"]))
-    if local_hf_exists == False:
-        logger.critical(f"[{ID}] failed to download model {config['model']}, please look into this, existing...", True)
-        sys.exit(1)
+    # logger.info(f"[{ID}] checking if model exists and is downloaded locally...", True)
+    # local_hf_exists = hf.get_hf_model(str(config["model"]))
+    # if local_hf_exists == False:
+    #     logger.critical(f"[{ID}] failed to download model {config['model']}, please look into this, existing...", True)
+    #     sys.exit(1)
 
     ################################################################################################
 
@@ -74,17 +72,17 @@ def main(name=None, config_path=None):
     logger.info(f"[{ID}] Activating model {config['model']} with following parameters: {str(config)}", True)
     try:
         model_running_process = subprocess.Popen([env_path, os.path.join(current_script_path, "model.py"),
-                                                "--framework", str(config["framework"]),
-                                                "--max_length", str(config["max_length"]),
-                                                "--temperature", str(config["temperature"]),
-                                                "--top_k", str(config["top_k"]),
-                                                "--top_p", str(config["top_p"]),
-                                                "--num_return_sequences", str(config["num_return_sequences"]),
+                                                "--framework", str(config.get("framework")),
+                                                "--max_length", str(config.get("max_length")),
+                                                "--temperature", str(config.get("temperature")),
+                                                "--top_k", str(config.get("top_k")),
+                                                "--top_p", str(config.get("top_p")),
+                                                "--num_return_sequences", str(config.get("num_return_sequences")),
                                                 "--uuid", str(ID),
-                                                "--prompt", str(config["prompt"]),
-                                                "--model", str(config["model"]),
-                                                "--device", str(config["device"]),
-                                                "--dtype", str(config["dtype"])
+                                                "--prompt", str(config.get("prompt")),
+                                                "--model", str(config.get("model")),
+                                                "--device", str(config.get("device")),
+                                                "--dtype", str(config.get("dtype"))
                                                 ])
         logger.info(f"[{ID}] model {config['model']} is running with a PID of {model_running_process.pid}", True)
     except Exception as err:
@@ -138,7 +136,7 @@ def main(name=None, config_path=None):
     final_dataset = {
         "model": util.read_json(model_data),
         "test_env": {
-            "verison": SETTINGS["version"],
+            "params": config,
             "commit": util.get_current_commit(),
             "hardware": hw.get_all(static_only=True)
         },
