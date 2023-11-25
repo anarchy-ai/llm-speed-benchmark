@@ -14,12 +14,12 @@ import util
 import hf
 import hw
 
-SETTINGS = util.read_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json"))
+SETTINGS = util.read_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ponfig.json"))
 
 # config arguments
 parser = argparse.ArgumentParser(description='Run performance benchmark for an LLM model')
 parser.add_argument('--name', type=str, default=None, help='name of this performance benchmark run')
-parser.add_argument('--config_path', type=str, default=None, help='path to config file that will be used for the performance benchmark')
+parser.add_argument('--config', type=str, default=None, help='path to config file that will be used for the performance benchmark')
 parser.add_argument('--loops', type=int, default=1, help='number of times the performance benchmark will be ran (default=1)')
 
 def main(name=None, config_path=None):
@@ -31,7 +31,7 @@ def main(name=None, config_path=None):
     current_script_path = os.path.dirname(os.path.abspath(__file__))
 
     if config_path == None:
-        config_path = os.path.join(current_script_path, "test.json")
+        raise Exception(f"please provide a path to a test config file (json)")
     elif os.path.isfile(str(config_path)) == False:
         logger.error(f"[{ID}] Config path {config_path} does not exist! Existing...", True)
         sys.exit(1)
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     # single benchmark run
     if loops <= 1:
         start_time = time.time()
-        main(name=args.name, config_path=args.config_path)
+        main(name=args.name, config_path=args.config)
         runtime = time.time() - start_time
         logger.info(f"(single) Total Runtime: {runtime} seconds", True)
         sys.exit(0)
@@ -182,7 +182,7 @@ if __name__ == "__main__":
         if args.name != None:
             i_name = f"{args.name}_{i_name}"
         logger.info(f"Run {i+1}/{args.loops} for performance benchmark", True)
-        filepath = main(name=i_name, config_path=args.config_path)
+        filepath = main(name=i_name, config_path=args.config)
         all_filepaths.append(filepath)
     logger.info(f"==> Muli-Run completed for performance benchmark. A total of {args.loops} runs we done and the following data was exported: {all_filepaths}", True)
     runtime = time.time() - start_time
