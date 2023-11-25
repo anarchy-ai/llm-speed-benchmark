@@ -73,7 +73,8 @@ def main(name=None, config_path=None):
 
     logger.info(f"[{ID}] Activating model {config['model']} with following parameters: {str(config)}", True)
     try:
-        model_running_process = subprocess.Popen([env_path, os.path.join(current_script_path, "model.py"), 
+        model_running_process = subprocess.Popen([env_path, os.path.join(current_script_path, "model.py"),
+                                                "--framework", str(config["framework"]),
                                                 "--max_length", str(config["max_length"]),
                                                 "--temperature", str(config["temperature"]),
                                                 "--top_k", str(config["top_k"]),

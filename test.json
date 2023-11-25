@@ -12,5 +12,6 @@
     "time_delay": 0,
     "model_start_pause": 1,
     "model_end_pause": 1,
-    "dtype": "bfloat16"
+    "dtype": "bfloat16",
+    "framework": "huggingface"
 }

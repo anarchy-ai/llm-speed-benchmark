@@ -6,6 +6,8 @@ import sys
 import os
 import subprocess
 
+import logger
+
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, "src")])
 import util
@@ -15,7 +17,7 @@ SETTING = util.read_json(os.path.join(ROOT_DIR, "config.json"))
 # NOTE: are of 11-24-2023 these are the current models supported in LLM-VM
 SUPPORTED_MODELS = SETTING["supported_frameworks"]["llm-vm"]["supported_models"]
 
-
+# get the latest commit from the local LLM-VM install
 def get_current_llmvm_commit():
     try:
         path = os.path.join(ROOT_DIR, "src/LLM-VM/.git")
@@ -60,18 +62,20 @@ def run_llm(model_name, prompt, model_params={}):
     if type(prompt) != str or len(prompt) == 0:
         raise Exception("prompt MOST be type str and have a length greater then 0")
     
+    """
+    ABOUT:
+        This is the default value for temperature in LLM-VM at the moment
+    LAST-DATE:
+        November 24, 2023
+    SOURCE:
+        https://github.com/anarchy-ai/LLM-VM/blob/main/src/llm_vm/client.py
+        ~lines 109
+    """
     temp = model_params.get("temperature")
     if temp == None:
-        """
-        ABOUT:
-            This is the default value for temperature in LLM-VM at the moment
-        LAST-DATE:
-            November 24, 2023
-        SOURCE:
-            https://github.com/anarchy-ai/LLM-VM/blob/main/src/llm_vm/client.py
-            ~lines 109
-        """
         temp = 0
+    # TODO: remove this log when a solution is implmented
+    logger.warning(f"currently, {run_llm.__name__}() only supports LLM-VM(s): temperature", True)
 
     client = Client(big_model=str(model_name))
     

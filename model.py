@@ -12,6 +12,7 @@ import uuid
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import hf
 import logger
+import pointer
 
 parser = argparse.ArgumentParser(description='run llm model hosted on HuggingFace')
 
@@ -31,6 +32,7 @@ parser.add_argument('--prompt', type=str, default="Hello World", help='Text prom
 parser.add_argument('--model', type=str, default="", help='Huggingface repo/path to LLM model')
 parser.add_argument('--device', type=str, default="", help='Device to run the model on, this can be "cpu" or "cuda:N"')
 parser.add_argument('--dtype', type=str, default="bfloat16", help="A tensor's data type, this will effect the overall accuracy and hardware performance for a model")
+parser.add_argument('--framework', type=str, default=None, help="Perfered framework to run LLM model on (huggingface, LLM-VM, etc)")
 
 # signal handler
 def signal_handler(signum, frame):
@@ -53,7 +55,7 @@ if __name__ == "__main__":
     logger.info(f"{args.uuid} - model {args.model} started at epoch time {start_time} seconds")
     
     try:
-        output = hf.run_llm(args.model, args.prompt, args.device, args.dtype, {
+        output = pointer.execute_llm(args.framework, args.model, args.prompt, args.device, args.dtype, {
             "max_length": args.max_length,
             "temperature": args.temperature,
             "top_k": args.top_k,
