@@ -1,12 +1,12 @@
 {
-    "model": "bloom",
-    "prompt": "Hello World!",
+    "model": "neo",
+    "prompt": "QUESTION: what is your goal in life ANSWER: ",
     
-    "max_length": 1000,
+    "max_length": null,
     "temperature": 0.9,
-    "top_k": 50,
-    "top_p": 0.9,
-    "num_return_sequences": 1,
+    "top_k": null,
+    "top_p": null,
+    "num_return_sequences": null,
 
     "time_delay": 0,
     "model_start_pause": 1,
