@@ -12,5 +12,7 @@ pip3 install tabulate
 pip3 install torch torchvision torchaudio
 pip3 install matplotlib
 
+pip install llm-vm
+
 huggingface-cli login
 

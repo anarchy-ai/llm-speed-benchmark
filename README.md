@@ -60,9 +60,7 @@ Checkout the results [HERE](https://github.com/anarchy-ai/llm-speed-benchmark/tr
 
 4. Install [LLM-VM](https://github.com/anarchy-ai/LLM-VM/tree/main):
     ```
-    cd src/
-    bash install_llmvm.sh
-    cd ..
+    pip install llm-vm
     ```
 
 5. (optional) If you are using models like LLAMA, you will need a HuggingFace access token. Setup your access token [HERE](https://huggingface.co/settings/tokens) then save your token to your console by running the following command:
