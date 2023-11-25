@@ -1,7 +1,35 @@
 {
-    "supported_frameworks": [
-        "huggingface",
-        "llm-vm"
-    ],
-    "version": 0.0
+    "version": 0.0,
+    "supported_frameworks": {
+        "huggingface": null,
+        "llm-vm": {
+            "supported_models": {
+                "pythia": "EleutherAI/pythia-70m-deduped",
+                "opt": "facebook/opt-350m",
+                "bloom": "bigscience/bloom-560m",
+                "neo": "EleutherAI/gpt-neo-1.3B",
+                "smallorca": "Open-Orca/LlongOrca-7B-16k",
+                "orca": "Open-Orca/LlongOrca-13B-16k",
+                "mistral": "Open-Orca/Mistral-7B-OpenOrca",
+                "platypus": "Open-Orca/OpenOrca-Platypus2-13B",
+                "llama": "openlm-research/open_llama_3b_v2",
+                "llama2": "meta-llama/Llama-2-7b-hf",
+                "codellama-7b": "codellama/CodeLlama-7b-hf",
+                "codellama-13b": "codellama/CodeLlama-13b-hf",
+                "codellama-34b": "codellama/CodeLlama-34b-hf",
+                "flan": "google/flan-t5-small",
+                "bert": null,
+                "gpt": null,
+                "gpt4": null,
+                "chat_gpt": null,
+                "quantized-llama2-7b-base": "TheBloke/Llama-2-7B-GGML",
+                "quantized-llama2-13b-base": "TheBloke/Llama-2-13B-GGML",
+                "llama2-7b-chat-Q4": "TheBloke/Llama-2-7B-Chat-GGML",
+                "llama2-7b-chat-Q6": "TheBloke/Llama-2-7B-Chat-GGML",
+                "llama2-13b-chat-Q4": "TheBloke/Llama-2-13B-Chat-GGML",
+                "llama2-13b-chat-Q6": "TheBloke/Llama-2-13B-Chat-GGML",
+                "llama2-7b-32k-Q4": "TheBloke/Llama-2-7B-32K-Instruct-GGML"
+            }
+        }
+    }
 }

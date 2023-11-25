@@ -58,6 +58,13 @@ Checkout the results [HERE](https://github.com/MehmetMHY/benchllm/tree/main/asse
     pip3 install torch torchvision torchaudio
     ```
 
+4. Install [LLM-VM](https://github.com/anarchy-ai/LLM-VM/tree/main):
+    ```
+    cd src/
+    bash install_llmvm.sh
+    cd ..
+    ```
+
 5. (optional) If you are using models like LLAMA, you will need a HuggingFace access token. Setup your access token [HERE](https://huggingface.co/settings/tokens) then save your token to your console by running the following command:
     ```
     huggingface-cli login
