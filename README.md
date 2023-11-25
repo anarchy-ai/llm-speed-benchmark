@@ -1,31 +1,31 @@
-# BenchLLM
+# LLM Speed Benchmark (LLMSB)
 
 <p align="center">
   <img width="300" src="./assets/docs/logo.png">
 </p>
 
-🚧 BenchLLM is currently in beta (v0). Please do not use this in production, or use it at your own risk. We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under [ISSUES](https://github.com/anarchy-ai/benchllm/issues). Your feedback is invaluable!
+🚧 LLM Speed Benchmark (LLMSB) is currently in beta (v0). Please do not use this in production, or use it at your own risk. We're still ironing out some kinks and improving functionality. If you encounter any bugs or have suggestions, kindly report them under [ISSUES](https://github.com/anarchy-ai/benchllm/issues). Your feedback is invaluable!
 
 ## About
 
-BenchLLM is a benchmarking tool for assessing LLM models' performance across different hardware platforms. Its ultimate goal is to compile a comprehensive dataset detailing LLM models' performance on various systems, enabling users to more effectively choose the right LLM model(s) for their projects.
+LLM Speed Benchmark (LLMSB) is a benchmarking tool for assessing LLM models' performance across different hardware platforms. Its ultimate goal is to compile a comprehensive dataset detailing LLM models' performance on various systems, enabling users to more effectively choose the right LLM model(s) for their projects.
 
 ## Limtations
 
-BenchLLM is on v0, so it has limitations:
-- Only designed to run on debian based operating systems, aka it's not designed to run on Windows. This is because BenchLLM uses neofetch and nvidia-smi to gather metrics under the hood and the filepath logic is based on unix operating systems.
+LLMSB is on v0, so it has limitations:
+- Only designed to run on debian based operating systems, aka it's not designed to run on Windows. This is because LLMSB uses neofetch and nvidia-smi to gather metrics under the hood and the filepath logic is based on unix operating systems.
 - Due to how metrics are recorded, it can take the metrics collector up to 1 second to do a collection. This means that, at the fast, we can collect hardware metrics every 1 second.
-- BenchLLM only uses HuggingFace to load and run models. This works for now, but the goal is to have BenchLLM support muliple frameworks, not just HuggingFace.
+- LLMSB only uses HuggingFace to load and run models. This works for now, but the goal is to have LLMSB support muliple frameworks, not just HuggingFace.
 - Currently, all models are ran though the logic presented in the run_llm() function, located in src/hf.py, where the functions AutoTokenizer() and AutoModelForCausalLM() are used to load and run a model. This works but it limits how we can config/optmize specific models. Knowing this, the goal is to create seperate classes for each popular model and utilize HuggingFace's model specifc classes, like LlamaTokenizer & LlamaForCausalLM, instead.
-- BenchLLM only gathers general, high level, metrics. In the future, we would like to gather lower level metrics. We think this can partly be done using Pytorch's [porfiler wrapper](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
+- LLMSB only gathers general, high level, metrics. In the future, we would like to gather lower level metrics. We think this can partly be done using Pytorch's [porfiler wrapper](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
 
 ## Sample Outputs
 
 ### November 22, 2023
 
-BenchLLM was ran/test on a L40 and H100 GPU though [RunPod](https://www.runpod.io/). In those benchmarks the models [llama-2-7b-hf](https://huggingface.co/meta-llama/Llama-2-7b-hf), [codellama-13b-oasst-sft-v10](https://huggingface.co/OpenAssistant/codellama-13b-oasst-sft-v10), & [mpt-7b](https://huggingface.co/mosaicml/mpt-7b) where tested.
+LLMSB was ran/test on a L40 and H100 GPU though [RunPod](https://www.runpod.io/). In those benchmarks the models [llama-2-7b-hf](https://huggingface.co/meta-llama/Llama-2-7b-hf), [codellama-13b-oasst-sft-v10](https://huggingface.co/OpenAssistant/codellama-13b-oasst-sft-v10), & [mpt-7b](https://huggingface.co/mosaicml/mpt-7b) where tested.
 
-Checkout the results [HERE](https://github.com/MehmetMHY/benchllm/tree/main/assets/docs/sample_results). If any errors/issues are noticed, please repport them to ISSUES. 
+Checkout the results [HERE](https://github.com/anarchy-ai/llm-speed-benchmark/tree/main/assets/docs/sample_results). If any errors/issues are noticed, please repport them to ISSUES. 
 
 ## Setup
 
@@ -74,7 +74,8 @@ Checkout the results [HERE](https://github.com/MehmetMHY/benchllm/tree/main/asse
 
 1. Complete the steps listed in the __Setup__ section.
 
-2. Set your parameters for the run in the config.json file. An example config.json file is provided, these are what the parameters mean:
+2. To configure your set, you need to create a json file with the following parameters (here is an example):
+    - NOTE: not every framework supports the same parameters
     ```
     {
       "model": "bigscience/bloom-560m",   # the model's path/repo on HuggingFace (https://huggingface.co/models)
@@ -87,22 +88,23 @@ Checkout the results [HERE](https://github.com/MehmetMHY/benchllm/tree/main/asse
       "num_return_sequences": 1,          # the number of independently ran instances of the model
       "time_delay": 0,                    # the time delay (seconds) the metrics-collecter will wait per interation
       "model_start_pause": 1,             # the time (seconds) the test will wait BEFORE running the LLM model
-      "model_end_pause": 1                # the time (seconds) the test will wait AFTER the LLM model is done running
+      "model_end_pause": 1                # the time (seconds) the test will wait AFTER the LLM model is done running,
+      "framework": "llm-vm"               # the name of the framework/library you want to use to run the model
     } 
     ```
 
-3. Run the script (pick one option)
+3. Using the path to the config file you create in the previous step, run the following to start the benchmark (pick one option):
     ```
     # run one benchmark
-    python3 run.py
+    python3 run.py --config ./configs/llmvm_test.json
 
     # run more then one benchmark (in this case 3)
-    python3 run.py --loops 3
+    python3 run.py --config ./configs/llmvm_test.json --loops 3
     ```
 
 4. After the benchmark is done running, check out the final results in a file that should look something like this:
     ```
-    report_8b7ada70-96d9-484a-93fb-c5c9ca92d15d.json
+    report_2023-11-25_05:55:04.207515_utc_1ffc4fa7-3aa9-4878-b874-1ff445e1ff8a.json
     ```
 
 ## Great Sources:

@@ -43,6 +43,8 @@ def main(name=None, config_path=None):
         logger.critical(f"[{ID}] python environment {env_path} does not exist, please create it!", True)
         sys.exit(1)
 
+    # TODO: (11-24-2023) this is commented out because not every LLM framework uses HuggingFace or the same model name(s)
+    # TODO: (11-24-2023) a solution for this needs to be found or this needs to get ripped out entirly
     # logger.info(f"[{ID}] checking if model exists and is downloaded locally...", True)
     # local_hf_exists = hf.get_hf_model(str(config["model"]))
     # if local_hf_exists == False:
