@@ -54,3 +54,11 @@ def delete_file(file_path):
             logger.error(f"error! failed to delete file {file_path}")
     else:
         logger.info(f"file {file_path} does not exist")
+
+def get_current_commit():
+    try:
+        cmd = "git log | head -n 1 | awk '{print $2}'"
+        output = execute(cmd)
+        return output[0]
+    except:
+        return ""

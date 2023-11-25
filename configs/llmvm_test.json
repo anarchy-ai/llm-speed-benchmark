@@ -1,0 +1,16 @@
+{
+    "model": "neo",
+    "prompt": "QUESTION: what is your goal in life ANSWER: ",
+    
+    "max_length": null,
+    "temperature": 0.9,
+    "top_k": null,
+    "top_p": null,
+    "num_return_sequences": null,
+
+    "time_delay": 0,
+    "model_start_pause": 1,
+    "model_end_pause": 1,
+    "dtype": null,
+    "framework": "llm-vm"
+}

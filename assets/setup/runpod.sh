@@ -10,6 +10,7 @@ pip3 install psutil
 pip3 install gputil
 pip3 install tabulate
 pip3 install torch torchvision torchaudio
+pip3 install matplotlib
 
 huggingface-cli login
 
