@@ -130,7 +130,7 @@ def main(name=None, config_path=None):
         os.makedirs(reports_path)
 
     # build filepath for final report file
-    final_data_path = f'report_{datetime.now(timezone.utc).strftime("%Y-%m-%d_%H:%M:%S.%f_utc")}_{ID}.json'
+    final_data_path = f'report_{datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S.%f_utc")}_{ID}.json'
     if name != None:
         final_data_path = f"{name}_{final_data_path}"    
     final_data_path = os.path.join(reports_path, final_data_path)

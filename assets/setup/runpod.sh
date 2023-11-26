@@ -11,6 +11,9 @@ pip3 install gputil
 pip3 install tabulate
 pip3 install torch torchvision torchaudio
 pip3 install matplotlib
+pip3 install sentencepiece
+pip3 install protobuf
+
 
 pip install llm-vm
 
