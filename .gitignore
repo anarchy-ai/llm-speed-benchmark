@@ -171,5 +171,5 @@ results/
 events.log
 *run_*.json
 reports/
-
+tools/*.csv
 
