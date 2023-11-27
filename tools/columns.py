@@ -31,25 +31,10 @@ output = []
 for path in json_files_paths:
     data = read_json(path)
 
-    max_avg_cpu_core_usage = -1
-    min_avg_cpu_core_usage = 10000000
-    for key in list(data["metric"].keys()):
-        all_core_percent_usage = 0
-        total_cores = 0
-        for core in data["metric"][key]["cpu"]["cores"]:
-            val = data["metric"][key]["cpu"]["cores"][core]
-            all_core_percent_usage += ( float(val.replace("%","")) / 100 )
-            total_cores += 1
-        
-        avg_cpu_core_usage = all_core_percent_usage / total_cores
-        if avg_cpu_core_usage > max_avg_cpu_core_usage:
-            max_avg_cpu_core_usage = avg_cpu_core_usage
-        if avg_cpu_core_usage < min_avg_cpu_core_usage:
-            min_avg_cpu_core_usage = avg_cpu_core_usage
-
     max_gpu_memory_usage = -1
     min_gpu_memory_usage = 1000000000000000000000000
     for key in list(data["metric"].keys()):
+        # TODO: this currently only assumes the RAM usage is in MB, this needs to be fixed
         memory_usage = float(data["metric"][key]['gpu']['0']['memory']['used'].replace('MB', '')) / 1024
         if memory_usage > max_gpu_memory_usage:
             max_gpu_memory_usage = memory_usage
@@ -63,9 +48,6 @@ for path in json_files_paths:
         "tokens_in": data["model"]["tokens"]["input"],
         "tokens_out": data["model"]["tokens"]["output"],
         "gpu": data["metric"][list(data["metric"].keys())[0]]["gpu"]["0"]["name"],
-        "cpu": data["test_env"]["hardware"]["neofetch"]["cpu"],
-        "max_avg_cpu_core_usage": max_avg_cpu_core_usage,
-        "min_avg_cpu_core_usage": min_avg_cpu_core_usage,
         "max_gpu_memory_usage": max_gpu_memory_usage,
         "min_gpu_memory_usage": min_gpu_memory_usage,
         "file": path.split("/")[-1]
