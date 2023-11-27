@@ -12,16 +12,6 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__
 sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, "src")])
 import util
 
-# get the latest commit from the local LLM-VM install
-def get_current_llmvm_commit():
-    try:
-        path = os.path.join(ROOT_DIR, "src/LLM-VM/.git")
-        output = subprocess.check_output("git log | head -n 1 | awk '{print $2}'", shell=True, cwd=path, universal_newlines=True)
-        output = str(output).replace("\n", "").replace(" ", "")
-        return output
-    except:
-        return ""
-
 """
 ABOUT:
     This function contains the official logic used by LLM-VM to pick a device (GPUs or CPUs)
@@ -83,7 +73,6 @@ def run_llm(model_name, prompt, supported_models, model_params={}):
     huggingface_path = supported_models[model_name]
     tokens_in = count_tokens(huggingface_path, prompt)
     tokens_out = count_tokens(huggingface_path, response["completion"])
-    llmvm_commit = get_current_llmvm_commit()
 
     return {
         "model_name": model_name,
@@ -97,7 +86,6 @@ def run_llm(model_name, prompt, supported_models, model_params={}):
         },
         "tokens_out/sec": tokens_out / runtime,
         "device": str(device),
-        "llm_vm_commit": llmvm_commit,
         "model_params": {
             "temperature": temp
         }
