@@ -77,6 +77,9 @@ if __name__ == "__main__":
 
     logger.info(f"{args.uuid} - model {args.model} started at epoch time {start_time} seconds")
     
+    # (11-30-2023) Change this part, for finetuning or custom model running
+    ##############################################################################################################
+
     try:
         output = pointer.execute_llm(args.framework, args.model, args.prompt, args.device, args.dtype, {
             "max_length": args.max_length,
@@ -88,6 +91,8 @@ if __name__ == "__main__":
     except Exception as err:
         logger.critical(f"{args.uuid} - existing... due to model {args.model} failed to run due to error: {err}")
         sys.exit(1)
+
+    ##############################################################################################################
 
     end_time = time.time()
 
