@@ -105,13 +105,43 @@ Checkout the results [HERE](https://github.com/anarchy-ai/llm-speed-benchmark/tr
     report_2023-11-25_05:55:04.207515_utc_1ffc4fa7-3aa9-4878-b874-1ff445e1ff8a.json
     ```
 
+## Setting Up RunPod:
+
+1. Setup RunPod, setup your ssh cert/key, and get a pod running. You can access your pod(s) here: https://www.runpod.io/console/pods
+
+2. Click the "Connect" button to get the ssh connection info. This info should look something like this:
+    ```
+    ssh root&12.345.678.90 -p 12345 -i ~/.ssh/id_example
+    ```
+    - This commad will be formated like this:
+        ```
+        ssh <user>@<ip-address> -p <port> -i <local-path-to-ssh-cert>
+        ```
+
+3. Using the command in step #2, you should be able to ssh into the pod and use the GPU you selected in that RunPod pod. 
+
+4. If you want to copy a file from the pod to your local machine, you would run command in this format (this is refering to the variables shown in step #2):
+    ```
+    scp -P <port> -i <local-path-to-ssh-cert> <user>@<ip-address>:<path-to-file-in-pod> <path-to-local-directory>
+    ```
+    - Here is an example of such a command:
+        ```
+        scp -P 12345 -i ~/.ssh/id_example <user>@<ip-address>:/root/test.txt /home/user1/Downloads/
+        ```
+
+5. After you are done with the pod, shut it down or pause it. But warning, if you pause it you will still get charged, just way less. 
+
 ## Great Sources:
+
 - Great datasets of prompts (if you can't come up with any):
   - https://github.com/f/awesome-chatgpt-prompts/tree/main
   - https://huggingface.co/datasets/bigscience/P3
   - https://www.kaggle.com/datasets/ratthachat/writing-prompts
+
 - Learn more about LLM parameters: https://huggingface.co/docs/transformers/main_classes/text_generation#transformers.GenerationConfig
+
 - Great benchmark to benchmark cloud-based LLM models: https://github.com/ray-project/llmperf
+
 - Cool LLM intelligence leadboards:
     - https://fasteval.github.io/FastEval/
     - https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
